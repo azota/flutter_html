@@ -106,8 +106,35 @@ class _CustomHtmlState extends State<CustomHtml>
   Widget build(BuildContext context) {
     super.build(context);
     MediaQuery.of(context).copyWith(textScaleFactor: 1);
-    return Html(
+    return /* Html(
       data: widget.html,
+    ); */
+        Html(
+      /* anchorKey: staticAnchorKey, */
+      data: widget.html,
+      customRenders: {
+        networkSourceMatcher(extension: 'jpg'): networkImageRender(
+          altWidget: (alt) => Text(alt ?? ""),
+          loadingWidget: () => const Text("Loading..."),
+        ),
+      },
+      onLinkTap: (url, _, __, ___) {
+        debugPrint("Opening $url...");
+      },
+      onImageTap: (src, _, __, ___) {
+        debugPrint(src);
+      },
+      onImageError: (exception, stackTrace) {
+        debugPrint(exception.toString());
+      },
+      onCssParseError: (css, messages) {
+        debugPrint("css that errored: $css");
+        debugPrint("error messages:");
+        for (var element in messages) {
+          debugPrint(element.toString());
+        }
+        return '';
+      },
     );
   }
 
