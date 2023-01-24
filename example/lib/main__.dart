@@ -49,7 +49,14 @@ final staticAnchorKey = GlobalKey();
 
 class MyHomePageState extends State<MyHomePage> {
   @override
+  void dispose() {
+    print('customHtml > dispose');
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    print('customHtml > build');
     return Scaffold(
       appBar: AppBar(
         title: const Text('flutter_html Example'),

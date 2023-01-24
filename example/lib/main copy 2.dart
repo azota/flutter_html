@@ -1,4 +1,3 @@
-import 'package:example/second_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html_all/flutter_html_all.dart';
@@ -74,25 +73,24 @@ class MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.arrow_downward),
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const SecondPage(
-                      title: 'SecondPage',
-                    )),
-          );
+          final anchorContext =
+              AnchorKey.forId(staticAnchorKey, "bottom")?.currentContext;
+          if (anchorContext != null) {
+            Scrollable.ensureVisible(anchorContext);
+          }
         },
       ),
       body: SafeArea(
-        child: ListView.builder(
-          itemBuilder: (context, position) {
-            return CustomHtml(
-              htmlList[position],
-              /* key: UniqueKey(), */
-            );
-          },
-          itemCount: htmlList.length,
-        ),
+        child: CustomScrollView(slivers: [
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                return CustomHtml(htmlList[index]);
+              },
+              childCount: htmlList.length,
+            ),
+          ),
+        ]),
       ),
     );
   }
@@ -107,18 +105,11 @@ class CustomHtml extends StatefulWidget {
   _CustomHtmlState createState() => _CustomHtmlState();
 }
 
-class _CustomHtmlState
-    extends State<CustomHtml> /* with AutomaticKeepAliveClientMixin */ {
-  @override
-  void dispose() {
-    print('customHtml > dispose');
-    super.dispose();
-  }
-
+class _CustomHtmlState extends State<CustomHtml>
+    with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
-    print('customHtml > build');
-    //super.build(context);
+    super.build(context);
     MediaQuery.of(context).copyWith(textScaleFactor: 1);
     return /* Html(
       data: widget.html,
@@ -152,6 +143,6 @@ class _CustomHtmlState
     );
   }
 
-  /* @override
-  bool get wantKeepAlive => true; */
+  @override
+  bool get wantKeepAlive => true;
 }

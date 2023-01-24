@@ -1,38 +1,17 @@
-import 'package:example/second_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html_all/flutter_html_all.dart';
 
-void main() => runApp(const MyApp());
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
-      ),
-      home: const MyHomePage(title: 'flutter_html Example'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+class SecondPage extends StatefulWidget {
+  const SecondPage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
   @override
-  MyHomePageState createState() => MyHomePageState();
+  SecondPageState createState() => SecondPageState();
 }
 
-final staticAnchorKey = GlobalKey();
-
-class MyHomePageState extends State<MyHomePage> {
+class SecondPageState extends State<SecondPage> {
   var htmlList = [];
 
   @override
@@ -73,26 +52,19 @@ class MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.arrow_downward),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const SecondPage(
-                      title: 'SecondPage',
-                    )),
-          );
-        },
+        onPressed: () {},
       ),
       body: SafeArea(
-        child: ListView.builder(
-          itemBuilder: (context, position) {
-            return CustomHtml(
-              htmlList[position],
-              /* key: UniqueKey(), */
-            );
-          },
-          itemCount: htmlList.length,
-        ),
+        child: CustomScrollView(slivers: [
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                return CustomHtml(htmlList[index]);
+              },
+              childCount: htmlList.length,
+            ),
+          ),
+        ]),
       ),
     );
   }
@@ -107,24 +79,11 @@ class CustomHtml extends StatefulWidget {
   _CustomHtmlState createState() => _CustomHtmlState();
 }
 
-class _CustomHtmlState
-    extends State<CustomHtml> /* with AutomaticKeepAliveClientMixin */ {
-  @override
-  void dispose() {
-    print('customHtml > dispose');
-    super.dispose();
-  }
-
+class _CustomHtmlState extends State<CustomHtml> {
   @override
   Widget build(BuildContext context) {
     print('customHtml > build');
-    //super.build(context);
-    MediaQuery.of(context).copyWith(textScaleFactor: 1);
-    return /* Html(
-      data: widget.html,
-    ); */
-        Html(
-      /* anchorKey: staticAnchorKey, */
+    return Html(
       data: widget.html,
       customRenders: {
         networkSourceMatcher(extension: 'jpg'): networkImageRender(
@@ -152,6 +111,9 @@ class _CustomHtmlState
     );
   }
 
-  /* @override
-  bool get wantKeepAlive => true; */
+  @override
+  void dispose() {
+    print('customHtml > dispose');
+    super.dispose();
+  }
 }
